@@ -1,3 +1,4 @@
 ﻿  main.cpp
-  TriangleTest.vcxproj -> c:\users\riley.smith\documents\visual studio 2015\Projects\Graphics\Debug\TriangleTest.exe
-  TriangleTest.vcxproj -> c:\users\riley.smith\documents\visual studio 2015\Projects\Graphics\Debug\TriangleTest.pdb (Partial PDB)
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  TriangleTest.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\TriangleTest.exe
+  TriangleTest.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\TriangleTest.pdb (Partial PDB)

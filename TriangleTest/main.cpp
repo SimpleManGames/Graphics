@@ -1,5 +1,9 @@
-#include "crenderutils.h"
+#include "window.h"
 
 int main() {
-	return 0;
+	Window window;
+	window.Initialize();
+	while (window.Update());
+
+	return window.Exit();
 }
