@@ -18,18 +18,21 @@ Geometry makeGeometry(const Vertex * verts, size_t vsize
 	glBindBuffer(GL_ARRAY_BUFFER, retval.vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, retval.ibo);
 	// Load in our vertices
-	glBufferData(GL_ARRAY_BUFFER, tsize * sizeof(Vertex), verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vsize * sizeof(Vertex), verts, GL_STATIC_DRAW);
 	// Load in our triangles
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tsize * sizeof(unsigned), tris,
 		GL_STATIC_DRAW);
 	// Active a vertex attribute (such as position)
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 	// describe the properties of the attribute (position)
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::POSITION);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)Vertex::COLOR);
 	// Unscope our variables (ORDER MATTERS!)
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	retval.size = tsize;
 	return retval;
 }
 
@@ -62,7 +65,6 @@ Shader makeShader(const char * vert, const char * frag) {
 	// Link the shaders to one program
 	glAttachShader(retval.handle, vs);
 	glAttachShader(retval.handle, fs);
-
 	glLinkProgram(retval.handle);
 
 	// Delete the shader, don't need them anymore
