@@ -1,2 +1,5 @@
-﻿  crenderutils.cpp
+﻿  window.cpp
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\window.cpp(16): warning C4477: 'fprintf' : format string '%S' requires an argument of type 'wchar_t *', but variadic argument 1 has type 'const GLchar *'
+  c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\window.cpp(16): note: consider using '%hS' in the format string
+  c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\window.cpp(16): note: consider using '%TS' in the format string
   RenderUtils.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\RenderUtils.lib
