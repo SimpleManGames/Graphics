@@ -4,8 +4,9 @@
 #include <cstdio>
 #include "crenderutils.h"
 
-Geometry makeGeometry(Vertex * verts, size_t vsize, unsigned int * tris, size_t tsize)
-{
+Geometry makeGeometry(const Vertex * verts, size_t vsize
+	, const unsigned int * tris, size_t tsize) {
+
 	Geometry retval;
 	retval.size = tsize;
 	// define our variables
@@ -32,10 +33,59 @@ Geometry makeGeometry(Vertex * verts, size_t vsize, unsigned int * tris, size_t 
 	return retval;
 }
 
-void freeGeometry(Geometry &geo)
-{
+void freeGeometry(Geometry &geo) {
+
 	glDeleteBuffers(1, &geo.vbo);
 	glDeleteBuffers(1, &geo.ibo);
 	glDeleteVertexArrays(1, &geo.vao);
 	geo = { 0,0,0,0 };
+}
+
+Shader makeShader(const char * vert, const char * frag) {
+	
+	// Create varibles
+	Shader retval;
+
+	retval.handle = glCreateProgram();
+
+	unsigned vs = glCreateShader(GL_VERTEX_SHADER);
+	unsigned fs = glCreateShader(GL_FRAGMENT_SHADER);
+
+	// Init varibles
+	glShaderSource(vs, 1, &vert, 0);
+	glShaderSource(fs, 1, &frag, 0);
+
+	// Compile shaders
+	glCompileShader(vs);
+	glCompileShader(fs);
+
+	// Link the shaders to one program
+	glAttachShader(retval.handle, vs);
+	glAttachShader(retval.handle, fs);
+
+	glLinkProgram(retval.handle);
+
+	// Delete the shader, don't need them anymore
+	glDeleteShader(vs);
+	glDeleteShader(fs);
+
+	// Return the program
+	return retval;
+}
+
+void freeShader(Shader &shader) {
+	glDeleteProgram(shader.handle);
+	shader.handle = 0;
+}
+
+void draw(const Shader &shader, const Geometry &geo) {
+	
+	glUseProgram(shader.handle);
+	// Binding the VAO also binds the IBO and VBO
+	glBindVertexArray(geo.vao);
+
+	// Draw elements will draw the verts that are currently bound
+	//using an array of indices
+	// IF AN IBO IS BOUND, we don't need to provide any indices
+	glDrawElements(GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0);
 }
