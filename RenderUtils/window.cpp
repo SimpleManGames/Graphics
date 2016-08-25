@@ -14,6 +14,10 @@ int Window::Initialize(int a_width, int a_height, char * a_title)
 	glfwInit();
 	winHandle = glfwCreateWindow(width, height, title, nullptr, nullptr);
 	glfwMakeContextCurrent(winHandle);
+	
+	glewExperimental = true;
+	glewInit();
+
 	isInit = true;
 
 	return true;
