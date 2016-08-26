@@ -7,9 +7,9 @@ int main() {
 	window.Initialize();
 
 	Vertex vert[3] = { 
-		{	 0,  .5f, 0, 1, 1,0,0,1 }, 
-		{  .5f, -.5f, 0, 1, 0,1,0,1 }, 
-		{ -.5f, -.5f, 0, 1, 0,0,1,1 } 
+		{	 0,  .5f, 0, 1, 1, 0, 0, 1 }, 
+		{  .5f, -.5f, 0, 1, 0, 1, 0, 1 }, 
+		{ -.5f, -.5f, 0, 1, 0, 0, 1, 1 } 
 	};
 
 	unsigned tris[3] = { 0, 1, 2 };
@@ -24,7 +24,7 @@ int main() {
 		"#version 450\n"
 		"in vec4 vColor;"
 		"out vec4 outColor;"
-		"void main() { outColor = vColor + vColor + vColor + vColor + vColor + vColor + vColor + vColor + vColor + vColor; } ";
+		"void main() { outColor = vColor; } ";
 
 	Geometry geo = makeGeometry(vert, 3, tris, 3);
 	Shader shader = makeShader(vertSha, fragSha);
