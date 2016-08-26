@@ -9,15 +9,16 @@ struct Geometry {
 	// size                 : number of triangles.
 };
 
-Geometry makeGeometry(const struct Vertex *verts, size_t vsize
-	, const unsigned int *tris, size_t tsize);
+Geometry makeGeometry( const struct Vertex *verts, size_t vsize
+					   , const unsigned int *tris, size_t tsize );
 
-void freeGeometry(Geometry &);
+void freeGeometry( Geometry & );
 
 struct Shader { unsigned handle; };
 
-Shader makeShader(const char *vert, const char *frag);
+Shader makeShader( const char *vert, const char *frag );
 
-void freeShader(Shader &);
+Shader loadShader( const char *vPath, const char *fPath );
+void freeShader( Shader & );
 
-void draw(const Shader &, const Geometry &);
+void draw( const Shader &, const Geometry & );
