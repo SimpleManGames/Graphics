@@ -9,7 +9,7 @@ private:
 	struct GLFWwindow *winHandle;
 
 public:
-	int Initialize(int a_width = 800, int a_height = 600, char *a_title = "Title");
+	int Initialize(int a_width = 600, int a_height = 600, char *a_title = "Title");
 	int Update();
 	int Exit();
 };

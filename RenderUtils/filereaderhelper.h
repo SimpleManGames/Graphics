@@ -15,7 +15,7 @@ char* getStringFromFile( const char* path ) {
 	if( fin.is_open() ) {
 #ifdef _DEBUG
 		std::string successfulMessage = "Opened the file at ";
-		std::cout << successfulMessage.append( path ) << std::endl;
+		std::cout << std::endl << std::endl << successfulMessage.append( path ) << std::endl;
 #endif
 		while( !fin.eof() && position < array_size ) {
 			fin.get( array[ position ] );
