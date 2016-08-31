@@ -12,7 +12,6 @@ int main() {
 	while( window.Update() ) {
 		time += 0.01666f;
 		draw( gallery.getShader( "defaultShader" ), gallery.getObject( "Cube" ), time );
-		
 	}
 
 	gallery.Exit();

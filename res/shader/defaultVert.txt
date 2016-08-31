@@ -18,5 +18,5 @@ void main() {
 	//gl_Position.w -= sin(cos((time + position.y) * 2) * 2 + 1) / time;
 	//gl_Position.w -= (cos(time- position.x * 10) / sin(time + position.x * 10)) / 10;
 
-	gl_Position.w = 10;
+	gl_Position.w = 1;
 }

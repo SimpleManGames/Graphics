@@ -43,7 +43,7 @@ const Shader & Gallery::getShader( const char * name ) {
 int Gallery::Initialize() {
 	LoadShaderFromGallery( "defaultShader", "../res/shader/defaultVert.txt"
 						   , "../res/shader/defaultFrag.txt" );
-	LoadObjectFromGallery( "Cube", "../res/models/Panda 1.obj" );
+	LoadObjectFromGallery( "Cube", "../res/models/cube.obj" );
 	return true;
 }
 
