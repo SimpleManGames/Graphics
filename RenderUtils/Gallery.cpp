@@ -5,7 +5,7 @@ int Gallery::AddShaderToGallery( const char * name, const char * v, const char *
 	return true;
 }
 
-int Gallery::LoadShaderFromGallery( const char * name, const char * v, const char * f ) {
+int Gallery::LoadShaderToGallery( const char * name, const char * v, const char * f ) {
 	if( !shaders.count( name ) ) {
 		shaders[ name ] = ::loadShader( v, f );
 		if( shaders[ name ].handle == 0 ) {
@@ -41,9 +41,10 @@ const Shader & Gallery::getShader( const char * name ) {
 }
 
 int Gallery::Initialize() {
-	LoadShaderFromGallery( "defaultShader", "../res/shader/defaultVert.txt"
+	LoadShaderToGallery( "defaultShader", "../res/shader/defaultVert.txt"
 						   , "../res/shader/defaultFrag.txt" );
 	LoadObjectFromGallery( "Cube", "../res/models/cube.obj" );
+	LoadObjectFromGallery( "Sphere", "../res/models/sphere.obj" );
 	return true;
 }
 

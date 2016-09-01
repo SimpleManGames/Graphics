@@ -12,7 +12,7 @@ private:
 	std::map<std::string, Shader> shaders;
 public:
 	int AddShaderToGallery( const char * name, const char * v, const char * f );
-	int LoadShaderFromGallery( const char * name, const char * v, const char * f );
+	int LoadShaderToGallery( const char * name, const char * v, const char * f );
 
 	int AddObjectToGallery( const char * name, const Vertex * verts, size_t vSize, const unsigned * tris, size_t tSize );
 	int LoadObjectFromGallery( const char * name, const char * path );

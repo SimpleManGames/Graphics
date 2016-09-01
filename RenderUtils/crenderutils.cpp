@@ -48,7 +48,7 @@ Geometry loadOBJ( const char * path ) {
 
 	bool ret = tinyobj::LoadObj( &attrib, &shapes, &materials, &err, path );
 
-	Vertex *verts = new Vertex[ attrib.vertices.size() / 3 ];
+	Vertex * verts = new Vertex[ attrib.vertices.size() / 3 ];
 	unsigned * tris = new unsigned[ shapes[ 0 ].mesh.indices.size() ];
 
 	for( int i = 0; i < attrib.vertices.size() / 3; ++i ) {
@@ -152,4 +152,17 @@ void draw( const Shader &shader, const Geometry &geo, float time ) {
 	//using an array of indices
 	// IF AN IBO IS BOUND, we don't need to provide any indices
 	glDrawElements( GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0 );
+}
+
+void draw( const Shader &s, const Geometry &g, const float * M, const float V[ 16 ], const float P[ 16 ] ) {
+	glEnable( GL_CULL_FACE );
+	
+	glUseProgram( s.handle );
+	glBindVertexArray( g.vao );
+
+	glUniformMatrix4fv( 0, 1, GL_FALSE, P );
+	glUniformMatrix4fv( 1, 1, GL_FALSE, V );
+	glUniformMatrix4fv( 2, 1, GL_FALSE, M );
+
+	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
 }
