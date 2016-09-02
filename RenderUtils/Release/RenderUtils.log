@@ -1,2 +1,4 @@
-﻿  Camera.cpp
-  RenderUtils.vcxproj -> C:\Users\riley.smith\documents\visual studio 2015\Projects\Graphics\Release\RenderUtils.lib
+﻿  crenderutils.cpp
+crenderutils.cpp(56): warning C4018: '<': signed/unsigned mismatch
+crenderutils.cpp(65): warning C4018: '<': signed/unsigned mismatch
+  RenderUtils.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Release\RenderUtils.lib

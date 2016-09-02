@@ -142,6 +142,7 @@
     <ClInclude Include="crenderutils.h" />
     <ClInclude Include="filereaderhelper.h" />
     <ClInclude Include="Gallery.h" />
+    <ClInclude Include="globjects.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="vertex.h" />

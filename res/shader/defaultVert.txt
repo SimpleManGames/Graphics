@@ -12,6 +12,4 @@ void main() {
 	vColor = color;
 	vPosition = position;
 	gl_Position = position;
-
-	gl_Position.w = 1;
 }

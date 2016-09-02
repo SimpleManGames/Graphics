@@ -4,11 +4,16 @@ in vec4 vColor;
 in vec4 vPosition;
 out vec4 outColor;
 
-uniform float time = 0.0f;
+uniform int i;
+
+//float ii;
 
 void main() { 
+	//if(i == 1) ii += .01f;
+	//else if( i == 0) -= .01f;
+
 	outColor = vColor;
-	outColor.r = (sin(time) + 1.0 / 2.0);
-	outColor.b = (sin(time) + 1.0 / 2.0);
-	outColor.g = (cos(sin(time) + 1.0) / 2.0);
+	outColor.r = cos(i);
+	outColor.b = tan(i);
+	outColor.g = sin(i);
 }
