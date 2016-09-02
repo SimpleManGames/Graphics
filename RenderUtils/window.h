@@ -1,7 +1,7 @@
 #pragma once
 
 class Window {
-
+	friend class Input;
 private:
 	int width, height;
 	char title[64];

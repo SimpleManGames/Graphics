@@ -12,11 +12,6 @@ void main() {
 	vColor = color;
 	vPosition = position;
 	gl_Position = position;
-	
-	//gl_Position.x *= (sin(time+ position.y * 5) / sin(time + position.y * 5)) / 5;
-	//gl_Position.y *= (cos(time- position.x * 5) / sin(time + position.x * 5)) / 5;
-	//gl_Position.w -= sin(cos((time + position.y) * 2) * 2 + 1) / time;
-	//gl_Position.w -= (cos(time- position.x * 10) / sin(time + position.x * 10)) / 10;
 
 	gl_Position.w = 1;
 }

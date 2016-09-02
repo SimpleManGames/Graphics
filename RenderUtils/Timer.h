@@ -3,8 +3,8 @@
 class Timer {
 public:
 	int Initialize();
-	int Step();
-	int Term();
+	int Update();
+	int Exit();
 
 	float getDeltaTime() const;
 	float getTotalTime() const;

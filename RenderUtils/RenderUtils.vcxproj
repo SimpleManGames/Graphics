@@ -130,15 +130,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="crenderutils.cpp" />
     <ClCompile Include="Gallery.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="crenderutils.h" />
     <ClInclude Include="filereaderhelper.h" />
     <ClInclude Include="Gallery.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="window.h" />

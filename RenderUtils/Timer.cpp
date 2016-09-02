@@ -2,12 +2,15 @@
 #include "GLFW/glfw3.h"
 
 int Timer::Initialize() {
-	glfwSetTime(0.0);
 
+	glfwSetTime(0.0);
+	prevTime = 0;
+	currentTime = 0;
+	deltaTime = 0;
 	return true;
 }
 
-int Timer::Step() {
+int Timer::Update() {
 
 	prevTime = currentTime;
 	currentTime = getRealTime();
@@ -17,7 +20,7 @@ int Timer::Step() {
 	return true;
 }
 
-int Timer::Term() {
+int Timer::Exit() {
 
 	return true;
 }

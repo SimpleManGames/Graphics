@@ -1,9 +1,4 @@
-﻿  window.cpp
-  Timer.cpp
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\timer.cpp(27): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  Gallery.cpp
-  crenderutils.cpp
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(54): warning C4018: '<': signed/unsigned mismatch
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(63): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+﻿  Input.cpp
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\input.cpp(42): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\input.cpp(43): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   RenderUtils.vcxproj -> C:\Users\riley.smith\documents\visual studio 2015\Projects\Graphics\Debug\RenderUtils.lib
