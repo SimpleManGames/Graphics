@@ -10,6 +10,7 @@ void main() {
 
 	outColor = vColor;
 
-	outColor = texture(texMap, vPosition.xy);
-
+	outColor = texture(texMap, vPosition.zx);
+	outColor.a = 1;
+	//outColor = vec4(1,1,1,1);
 }

@@ -7,6 +7,7 @@
 #include "Timer.h"
 #include "Input.h"
 #include "Camera.h"
+#include "MakeGeometry.h"
 
 int main() {
 	Window window;
@@ -19,7 +20,7 @@ int main() {
 	input.Initialize( window );
 
 	unsigned char pixels[ ] = { 255, 255, 0 };
-	//Texture tex = makeTexture( 1, 1, 0x1907, pixels );
+	Texture work = makeTexture( 1, 1, 0x1907, pixels );
 	Texture tex = loadTexture( "../res/texture/bigmisssteak.png" );
 
 	FlyCamera camera;
@@ -34,6 +35,7 @@ int main() {
 	gallery.LoadShaderToGallery( "Texture", "../res/shader/texVert.txt"
 								 , "../res/shader/texFrag.txt" );
 
+	Geometry plane = GenerateGrid( 100, 100 );
 
 	glm::mat4 proj, view, model;
 
@@ -52,6 +54,8 @@ int main() {
 		camera.Update( input, time );
 		draw( gallery.getShader( "Texture" ), gallery.getObject( "Fox" ), tex
 			  , glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ) );
+
+		draw( gallery.getShader( "Texture" ), plane, tex, glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ) );
 	}
 
 	gallery.Exit();

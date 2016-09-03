@@ -54,7 +54,7 @@ Geometry loadOBJ( const char * path ) {
 	unsigned * tris = new unsigned[ shapes[ 0 ].mesh.indices.size() ];
 
 	for( int i = 0; i < attrib.vertices.size() / 3; ++i ) {
-		verts[ i ] = {
+		verts[ i ].position = {
 			  attrib.vertices[ i * 3 ]
 			, attrib.vertices[ i * 3 + 1 ]
 			, attrib.vertices[ i * 3 + 2 ]
