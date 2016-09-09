@@ -30,10 +30,11 @@ Geometry makeGeometry( const Vertex * verts, size_t vsize
 	// Active a vertex attribute (such as position)
 	glEnableVertexAttribArray( 0 );
 	glEnableVertexAttribArray( 1 );
-	//glEnableVertexAttribArray( 2 );
+	glEnableVertexAttribArray( 2 );
 	// describe the properties of the attribute (position)
 	glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::POSITION );
-	glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::COLOR );
+	glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::NORMAL );
+	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::UV );
 	//glVertexAttribPointer( 2, 1, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::SCALE );
 	// Unscope our variables (ORDER MATTERS!)
 	glBindVertexArray( 0 );
@@ -50,24 +51,28 @@ Geometry loadOBJ( const char * path ) {
 
 	bool ret = tinyobj::LoadObj( &attrib, &shapes, &materials, &err, path );
 
-	Vertex * verts = new Vertex[ attrib.vertices.size() / 3 ];
-	unsigned * tris = new unsigned[ shapes[ 0 ].mesh.indices.size() ];
+	int vSize = shapes[ 0 ].mesh.indices.size();
 
-	for( int i = 0; i < attrib.vertices.size() / 3; ++i ) {
-		verts[ i ].position = {
-			  attrib.vertices[ i * 3 ]
-			, attrib.vertices[ i * 3 + 1 ]
-			, attrib.vertices[ i * 3 + 2 ]
-			, 1
-		};
+	Vertex * verts = new Vertex[ vSize ];
+	unsigned * tris = new unsigned[ vSize ];
+
+	for( int i = 0; i < vSize; ++i ) {
+		auto ind = shapes[ 0 ].mesh.indices[ i ];
+
+		const float * n = &attrib.normals[ ind.normal_index * 3 ];
+		const float * p = &attrib.vertices[ ind.vertex_index * 3 ];
+
+		verts[ i ].position = glm::vec4( p[ 0 ], p[ 1 ], p[ 2 ], 1.0f );
+		verts[ i ].normal = glm::vec4( n[ 0 ], n[ 1 ], n[ 2 ], 0.0f );
+
+		if( ind.texcoord_index >= 0 ) {
+			const float * t = &attrib.texcoords[ ind.texcoord_index * 2 ];
+			verts[ i ].uv = glm::vec2( t[ 0 ], t[ 1 ] );
+		}
+		tris[ i ] = i;
 	}
 
-	for( int i = 0; i < shapes[ 0 ].mesh.indices.size(); ++i ) {
-		tris[ i ] = shapes[ 0 ].mesh.indices[ i ].vertex_index;
-	}
-
-	Geometry retVal = makeGeometry( verts, attrib.vertices.size() / 3,
-									tris, shapes[ 0 ].mesh.indices.size() );
+	Geometry retVal = makeGeometry( verts, vSize, tris, vSize);
 
 	delete[ ] verts;
 	delete[ ] tris;
@@ -124,6 +129,7 @@ void freeShader( Shader &shader ) {
 	glDeleteProgram( shader.handle );
 	shader.handle = 0;
 }
+
 Texture makeTexture( unsigned width, unsigned height, unsigned format, const unsigned char * pixels ) {
 	Texture retval = { 0, width, height, format };
 
@@ -134,10 +140,34 @@ Texture makeTexture( unsigned width, unsigned height, unsigned format, const uns
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
 	return retval;
 }
+
+Texture makeTextureF( unsigned width, unsigned height, unsigned format, const float *pixels ) {
+	Texture retval = { 0, width, height, format };
+
+	glGenTextures( 1, &retval.handle );
+	glBindTexture( GL_TEXTURE_2D, retval.handle );
+	//glTexImage2D( GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, pixels );
+
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+	glBindTexture( GL_TEXTURE_2D, 0 );
+
+	return retval;
+}
+
 Texture loadTexture( const char * path ) {
 	Texture retval = { 0, 0, 0, 0 };
 
@@ -175,7 +205,6 @@ void draw( const Shader &shader, const Geometry &geo ) {
 	// IF AN IBO IS BOUND, we don't need to provide any indices
 	glDrawElements( GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0 );
 }
-
 void draw( const Shader &shader, const Geometry &geo, float time ) {
 
 	glUseProgram( shader.handle );
@@ -195,9 +224,9 @@ void draw( const Shader &shader, const Geometry &geo, float time ) {
 	// IF AN IBO IS BOUND, we don't need to provide any indices
 	glDrawElements( GL_TRIANGLES, geo.size, GL_UNSIGNED_INT, 0 );
 }
-
-void draw( const Shader &s, const Geometry &g, const float * M, const float V[ 16 ], const float P[ 16 ] ) {
+void draw( const Shader &s, const Geometry &g, const float * M, const float V[ 16 ], const float P[ 16 ], const Texture * T, unsigned t_count ) {
 	glEnable( GL_CULL_FACE );
+	glEnable( GL_DEPTH_TEST );
 
 	glUseProgram( s.handle );
 	glBindVertexArray( g.vao );
@@ -206,24 +235,14 @@ void draw( const Shader &s, const Geometry &g, const float * M, const float V[ 1
 	glUniformMatrix4fv( 1, 1, GL_FALSE, V );
 	glUniformMatrix4fv( 2, 1, GL_FALSE, M );
 
-	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
-}
-
-void draw( const Shader &s, const Geometry &g, const float * M, const float V[ 16 ], const float P[ 16 ], int i ) {
-	glEnable( GL_CULL_FACE );
-
-	glUseProgram( s.handle );
-	glBindVertexArray( g.vao );
-
-	glUniformMatrix4fv( 0, 1, GL_FALSE, P );
-	glUniformMatrix4fv( 1, 1, GL_FALSE, V );
-	glUniformMatrix4fv( 2, 1, GL_FALSE, M );
-	int loc = glGetUniformLocation( s.handle, "i" );
-	glUniform1i( loc, i );
+	for( int i = 0; i < t_count; ++i ) {
+		glActiveTexture( GL_TEXTURE0 + i );
+		glBindTexture( GL_TEXTURE_2D, T[ i ].handle );
+		glUniform1i( 3 + i, 0 + i );
+	}
 
 	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
 }
-
 void draw( const Shader &s, const Geometry &g, const Texture & t, const float  M[ 16 ], const float V[ 16 ], const float P[ 16 ] ) {
 	glEnable( GL_CULL_FACE );
 	glEnable( GL_DEPTH_TEST );
@@ -236,8 +255,8 @@ void draw( const Shader &s, const Geometry &g, const Texture & t, const float  M
 
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, t.handle );
-	int loc = glGetUniformLocation( s.handle, "texMap" );
-	glUniform1i( loc, 0 );
+
+
 
 	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
 }

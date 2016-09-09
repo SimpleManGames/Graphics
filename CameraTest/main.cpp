@@ -22,20 +22,25 @@ int main() {
 	unsigned char pixels[ ] = { 255, 255, 0 };
 	Texture work = makeTexture( 1, 1, 0x1907, pixels );
 	Texture tex = loadTexture( "../res/texture/bigmisssteak.png" );
-
+	//Texture tex = PerlinNoise( 64, 8 );
 	FlyCamera camera;
 	camera.jumpTo( glm::vec3( 5, 5, 5 ) );
 	camera.lookAt( glm::vec3( 0, 0, 0 ) );
 
-	gallery.LoadObjectFromGallery( "PandaMan", "../res/models/PandaMan.obj" );
-	gallery.LoadObjectFromGallery( "Fox", "../res/models/Fox.obj" );
+	//gallery.LoadObjectFromGallery( "PandaMan", "../res/models/PandaMan.obj" );
+	//gallery.LoadObjectFromGallery( "Fox", "../res/models/Fox.obj" );
+	gallery.LoadObjectFromGallery( "SoulSpear", "../res/models/soulspear.obj" );
 
-	gallery.LoadShaderToGallery( "Camera", "../res/shader/camVert.txt"
-								 , "../res/shader/camFrag.txt" );
-	gallery.LoadShaderToGallery( "Texture", "../res/shader/texVert.txt"
-								 , "../res/shader/texFrag.txt" );
+//	gallery.LoadShaderToGallery( "Texture", "../res/shader/texVert.txt"
+	//							 , "../res/shader/texFrag.txt" );
+	gallery.LoadShaderToGallery( "Phong", "../res/shader/phongVert.txt"
+								 , "../res/shader/phongFrag.txt" );
 
-	Geometry plane = GenerateGrid( 100, 100 );
+	Texture tArray[ ] = { loadTexture( "../res/texture/soulspear_diffuse.tga" ), 
+						  loadTexture( "../res/texture/soulspear_specular.tga" ),
+						  loadTexture("../res/texture/soulspear_normal.tga" ) };
+
+	Geometry plane = GenerateGrid( 50, 50 );
 
 	glm::mat4 proj, view, model;
 
@@ -48,14 +53,11 @@ int main() {
 		view = camera.getView();
 		proj = camera.getProj();
 
-		if( input.getKeyState( 'T' ) == Input::DOWN )
-			i *= -1;
-
 		camera.Update( input, time );
-		draw( gallery.getShader( "Texture" ), gallery.getObject( "Fox" ), tex
-			  , glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ) );
 
-		draw( gallery.getShader( "Texture" ), plane, tex, glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ) );
+		draw( gallery.getShader( "Phong" ), gallery.getObject( "SoulSpear" ), glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ), tArray, 3 );
+
+		//draw( gallery.getShader( "Perlin" ), plane, tex, glm::value_ptr( model ), glm::value_ptr( view ), glm::value_ptr( proj ) );
 	}
 
 	gallery.Exit();
