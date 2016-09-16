@@ -31,7 +31,7 @@ int Window::Initialize(int a_width, int a_height, char * a_title)
 	
 	glewExperimental = true;
 	glewInit();
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 	isInit = true;
 

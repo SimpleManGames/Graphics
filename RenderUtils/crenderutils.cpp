@@ -31,10 +31,12 @@ Geometry makeGeometry( const Vertex * verts, size_t vsize
 	glEnableVertexAttribArray( 0 );
 	glEnableVertexAttribArray( 1 );
 	glEnableVertexAttribArray( 2 );
+	glEnableVertexAttribArray( 3 );
 	// describe the properties of the attribute (position)
 	glVertexAttribPointer( 0, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::POSITION );
-	glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::NORMAL );
-	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::UV );
+	glVertexAttribPointer( 1, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::COLOR );
+	glVertexAttribPointer( 2, 4, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::NORMAL );
+	glVertexAttribPointer( 3, 2, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::UV );
 	//glVertexAttribPointer( 2, 1, GL_FLOAT, GL_FALSE, sizeof( Vertex ), ( void* )Vertex::SCALE );
 	// Unscope our variables (ORDER MATTERS!)
 	glBindVertexArray( 0 );
@@ -72,7 +74,7 @@ Geometry loadOBJ( const char * path ) {
 		tris[ i ] = i;
 	}
 
-	Geometry retVal = makeGeometry( verts, vSize, tris, vSize);
+	Geometry retVal = makeGeometry( verts, vSize, tris, vSize );
 
 	delete[ ] verts;
 	delete[ ] tris;
@@ -140,8 +142,8 @@ Texture makeTexture( unsigned width, unsigned height, unsigned format, const uns
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+	//glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 
 	glBindTexture( GL_TEXTURE_2D, 0 );
 
@@ -194,6 +196,50 @@ void freeTexture( Texture &t ) {
 	glDeleteTextures( 1, &t.handle );
 	t = { 0,0,0,0 };
 }
+Framebuffer makeFramebuffer( unsigned width, unsigned height, unsigned nColors ) {
+	Framebuffer retVal = { 0, width, height, nColors };
+
+	glGenFramebuffers( 1, &retVal.handle );
+	glBindFramebuffer( GL_FRAMEBUFFER, retVal.handle );
+
+	retVal.depth = makeTexture( width, height, GL_DEPTH_COMPONENT, 0 );
+	glFramebufferTexture( GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, retVal.depth.handle, 0 );
+
+	const GLenum attachments[ 8 ] = {
+		GL_COLOR_ATTACHMENT0,
+		GL_COLOR_ATTACHMENT1, 
+		GL_COLOR_ATTACHMENT2,
+		GL_COLOR_ATTACHMENT3, 
+		GL_COLOR_ATTACHMENT4, 
+		GL_COLOR_ATTACHMENT5,
+		GL_COLOR_ATTACHMENT6, 
+		GL_COLOR_ATTACHMENT7 
+	};
+	
+	for( int i = 0; i < nColors; ++i ) {
+		retVal.colors[ i ] = makeTexture( width, height, GL_RGBA, 0 );
+		glFramebufferTexture( GL_FRAMEBUFFER, attachments[ i ], retVal.colors[i].handle, 0 );
+	}
+
+	glDrawBuffers( nColors, attachments );
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+	return retVal;
+}
+void freeFramebuffer( Framebuffer & b ) {
+	for( int i = 0; i < b.nColors; ++i ) {
+		freeTexture( b.colors[ i ]);
+	}
+	glDeleteFramebuffers( 1, &b.handle );
+	b = { 0,0,0,0 };
+}
+
+void clearFramebuffer( const Framebuffer & b ) {
+	//glClearColor( .5f, .5f, .5f, 1.0f );
+	glBindFramebuffer( GL_FRAMEBUFFER, b.handle );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+}
+
 void draw( const Shader &shader, const Geometry &geo ) {
 
 	glUseProgram( shader.handle );
@@ -257,6 +303,29 @@ void draw( const Shader &s, const Geometry &g, const Texture & t, const float  M
 	glBindTexture( GL_TEXTURE_2D, t.handle );
 
 
+
+	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
+}
+
+void drawFB( const Shader & s, const Geometry & g, const Framebuffer & f, const float M[ 16 ], const float V[ 16 ], const float P[ 16 ], const Texture * T, unsigned t_count ) {
+	glEnable( GL_CULL_FACE );
+	glEnable( GL_DEPTH_TEST );
+
+	glBindFramebuffer( GL_FRAMEBUFFER, f.handle );
+	glUseProgram( s.handle );
+	glBindVertexArray( g.vao );
+
+	glViewport( 0, 0, f.width, f.height );
+
+	glUniformMatrix4fv( 0, 1, GL_FALSE, P );
+	glUniformMatrix4fv( 1, 1, GL_FALSE, V );
+	glUniformMatrix4fv( 2, 1, GL_FALSE, M );
+
+	for( int i = 0; i < t_count; ++i ) {
+		glActiveTexture( GL_TEXTURE0 + i );
+		glBindTexture( GL_TEXTURE_2D, T[ i ].handle );
+		glUniform1i( 3 + i, 0 + i );
+	}
 
 	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
 }
