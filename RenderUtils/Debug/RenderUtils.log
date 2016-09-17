@@ -1,6 +1,7 @@
 ﻿  crenderutils.cpp
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(219): warning C4018: '<': signed/unsigned mismatch
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(230): warning C4018: '<': signed/unsigned mismatch
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(284): warning C4018: '<': signed/unsigned mismatch
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(324): warning C4018: '<': signed/unsigned mismatch
-  RenderUtils.vcxproj -> C:\Users\riley.smith\documents\visual studio 2015\Projects\Graphics\Debug\RenderUtils.lib
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(61): warning C4018: '<': signed/unsigned mismatch
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(225): warning C4018: '<': signed/unsigned mismatch
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(236): warning C4018: '<': signed/unsigned mismatch
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(290): warning C4018: '<': signed/unsigned mismatch
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\crenderutils.cpp(330): warning C4018: '<': signed/unsigned mismatch
+  RenderUtils.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\RenderUtils.lib

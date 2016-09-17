@@ -12,4 +12,7 @@ public:
 	int Initialize(int a_width = 600, int a_height = 600, char *a_title = "Title");
 	int Update();
 	int Exit();
+
+	int GetWidth() { return width; }
+	int GetHeight() { return height; }
 };

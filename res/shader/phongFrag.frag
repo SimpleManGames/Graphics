@@ -2,8 +2,7 @@
 
 layout(location = 0)out vec4 outColor;
 layout(location = 1)out vec4 outDiffuse;
-layout(location = 2)out vec4 outSpec;
-
+layout(location = 2)out vec4 outSpec
 
 layout(location = 0)uniform mat4 proj;
 layout(location = 1)uniform mat4 view;

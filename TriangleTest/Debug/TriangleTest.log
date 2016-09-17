@@ -1,2 +1,4 @@
 ﻿  main.cpp
-c:\users\riley.smith\documents\visual studio 2015\projects\graphics\renderutils\vertex.h(3): fatal error C1083: Cannot open include file: 'GLM\glm.hpp': No such file or directory
+c:\users\riley.smith\documents\visual studio 2015\projects\graphics\triangletest\main.cpp(23): warning C4838: conversion from 'int' to 'unsigned int' requires a narrowing conversion
+  TriangleTest.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\TriangleTest.exe
+  TriangleTest.vcxproj -> C:\Users\riley.smith\Documents\Visual Studio 2015\Projects\Graphics\Debug\TriangleTest.pdb (Partial PDB)

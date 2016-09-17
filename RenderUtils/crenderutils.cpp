@@ -9,6 +9,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "STB\stb_image.h"
 
+#include "GLM\glm.hpp"
+#include "GLM\ext.hpp"
+
 Geometry makeGeometry( const Vertex * verts, size_t vsize
 					   , const unsigned int * tris, size_t tsize ) {
 
@@ -53,31 +56,34 @@ Geometry loadOBJ( const char * path ) {
 
 	bool ret = tinyobj::LoadObj( &attrib, &shapes, &materials, &err, path );
 
-	int vSize = shapes[ 0 ].mesh.indices.size();
+	Geometry retVal;
 
-	Vertex * verts = new Vertex[ vSize ];
-	unsigned * tris = new unsigned[ vSize ];
+	for( int s = 0; s < shapes.size(); s++ ) {
+		int vSize = shapes[ s ].mesh.indices.size();
 
-	for( int i = 0; i < vSize; ++i ) {
-		auto ind = shapes[ 0 ].mesh.indices[ i ];
+		Vertex * verts = new Vertex[ vSize ];
+		unsigned * tris = new unsigned[ vSize ];
 
-		const float * n = &attrib.normals[ ind.normal_index * 3 ];
-		const float * p = &attrib.vertices[ ind.vertex_index * 3 ];
+		for( int i = 0; i < vSize; i++ ) {
+			auto ind = shapes[ s ].mesh.indices[ i ];
 
-		verts[ i ].position = glm::vec4( p[ 0 ], p[ 1 ], p[ 2 ], 1.0f );
-		verts[ i ].normal = glm::vec4( n[ 0 ], n[ 1 ], n[ 2 ], 0.0f );
+			const float * n = &attrib.normals[ ind.normal_index * 3 ];
+			const float * p = &attrib.vertices[ ind.vertex_index * 3 ];
 
-		if( ind.texcoord_index >= 0 ) {
-			const float * t = &attrib.texcoords[ ind.texcoord_index * 2 ];
-			verts[ i ].uv = glm::vec2( t[ 0 ], t[ 1 ] );
+			verts[ i ].position = glm::vec4( p[ 0 ], p[ 1 ], p[ 2 ], 1.0f );
+			verts[ i ].normal = glm::vec4( n[ 0 ], n[ 1 ], n[ 2 ], 0.0f );
+
+			if( ind.texcoord_index >= 0 ) {
+				const float * t = &attrib.texcoords[ ind.texcoord_index * 2 ];
+				verts[ i ].uv = glm::vec2( t[ 0 ], t[ 1 ] );
+			}
+			tris[ i ] = i;
 		}
-		tris[ i ] = i;
+		retVal = makeGeometry( verts, vSize, tris, vSize );
+
+		delete[ ] verts;
+		delete[ ] tris;
 	}
-
-	Geometry retVal = makeGeometry( verts, vSize, tris, vSize );
-
-	delete[ ] verts;
-	delete[ ] tris;
 
 	return retVal;
 }
@@ -207,18 +213,18 @@ Framebuffer makeFramebuffer( unsigned width, unsigned height, unsigned nColors )
 
 	const GLenum attachments[ 8 ] = {
 		GL_COLOR_ATTACHMENT0,
-		GL_COLOR_ATTACHMENT1, 
+		GL_COLOR_ATTACHMENT1,
 		GL_COLOR_ATTACHMENT2,
-		GL_COLOR_ATTACHMENT3, 
-		GL_COLOR_ATTACHMENT4, 
+		GL_COLOR_ATTACHMENT3,
+		GL_COLOR_ATTACHMENT4,
 		GL_COLOR_ATTACHMENT5,
-		GL_COLOR_ATTACHMENT6, 
-		GL_COLOR_ATTACHMENT7 
+		GL_COLOR_ATTACHMENT6,
+		GL_COLOR_ATTACHMENT7
 	};
-	
+
 	for( int i = 0; i < nColors; ++i ) {
 		retVal.colors[ i ] = makeTexture( width, height, GL_RGBA, 0 );
-		glFramebufferTexture( GL_FRAMEBUFFER, attachments[ i ], retVal.colors[i].handle, 0 );
+		glFramebufferTexture( GL_FRAMEBUFFER, attachments[ i ], retVal.colors[ i ].handle, 0 );
 	}
 
 	glDrawBuffers( nColors, attachments );
@@ -228,7 +234,7 @@ Framebuffer makeFramebuffer( unsigned width, unsigned height, unsigned nColors )
 }
 void freeFramebuffer( Framebuffer & b ) {
 	for( int i = 0; i < b.nColors; ++i ) {
-		freeTexture( b.colors[ i ]);
+		freeTexture( b.colors[ i ] );
 	}
 	glDeleteFramebuffers( 1, &b.handle );
 	b = { 0,0,0,0 };
@@ -328,4 +334,57 @@ void drawFB( const Shader & s, const Geometry & g, const Framebuffer & f, const 
 	}
 
 	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
+}
+
+
+void Draw_Internal::BeginDraw( const Shader & s, const Geometry & g, const Framebuffer & f ) {
+	glBindFramebuffer( GL_FRAMEBUFFER, f.handle );
+	glUseProgram( s.handle );
+	glBindVertexArray( g.vao );
+
+	glEnable( GL_CULL_FACE );
+	glEnable( GL_DEPTH_TEST );
+	glViewport( 0, 0, f.width, f.height );
+}
+
+void Draw_Internal::EndDraw( const Shader & s, const Geometry & g, const Framebuffer & f ) {
+
+	glDrawElements( GL_TRIANGLES, g.size, GL_UNSIGNED_INT, 0 );
+
+	glBindVertexArray( 0 );
+	glUseProgram( 0 );
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, int val ) {
+	glUniform1i( idx, val );
+	return 0;
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, float val ) {
+	glUniform1f( idx, val );
+	return 0;
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, const Texture & val ) {
+	glActiveTexture( GL_TEXTURE0 + tex );
+	glBindTexture( GL_TEXTURE_2D, val.handle );
+	glUniform1i( idx, tex );
+	return tex + 1;
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, const glm::vec3 & val ) {
+	glUniform3fv( idx, 1, glm::value_ptr( val ) );
+	return 0;
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, const glm::mat4 & val ) {
+	glUniformMatrix4fv( idx, 1, GL_FALSE, glm::value_ptr( val ) );
+	return 0;
+}
+
+size_t Draw_Internal::Format( size_t idx, size_t tex, const float val[ 16 ] ) {
+	glUniformMatrix4fv( idx, 1, GL_FALSE, val );
+	return 0;
 }
